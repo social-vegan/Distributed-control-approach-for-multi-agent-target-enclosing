@@ -109,20 +109,19 @@ for i=1:n
         del(i)=1/r(i);
         a(i)=(r(i)*a_star)/r(reqmod(i+1,n));
         c(i)=1-a(i)-b(i);
-    end
-    
+    end   
 end
-
 %% Over Time Interval
 dt=1;
+xyO_1(:,3)=deg2rad(xyO_1(:,3));
 clc;
-f_x=zeros(300000,n);
-f_y=zeros(300000,n);
+f_x=zeros(1000,n);
+f_y=zeros(1000,n);
 xyO=xyO_1;
 xy=xy_1;
 p_val=1;
-for time=1:1:325000
-    if time>25000
+for time=1:1:1000
+    if time>0
         f_x(p_val,:)=xyO(:,1);
         f_y(p_val,:)=xyO(:,2);
         p_val=p_val+1;
@@ -144,10 +143,11 @@ for time=1:1:325000
     for i=1:n
         phi(i)=atan2((xyO(reqmod(i+1,n),2)-xy(reqmod(i+1,m),2)),(xyO(reqmod(i+1,n),1)-xy(reqmod(i+1,m),1)))-atan2((xyO(reqmod(i,n),2)-xy(reqmod(i,m),2)),(xyO(reqmod(i,n),1)-xy(reqmod(i,m),1)));
     end
-    %%%%% Relative Measurements %%%%%%
     
+    %%%%% Relative Measurements %%%%%%
     for i=1:n
-        RO(:,:,i)=[cos(deg2rad(xyO(i,3))),sin(deg2rad(xyO(i,3)));-1*sin(deg2rad(xyO(i,3))),cos(deg2rad(xyO(i,3)))];  
+        %RO(:,:,i)=[cos(deg2rad(xyO(i,3))),sin(deg2rad(xyO(i,3)));-1*sin(deg2rad(xyO(i,3))),cos(deg2rad(xyO(i,3)))];  
+        RO(:,:,i)=[cos(xyO(i,3)) sin(xyO(i,3));-1*sin(xyO(i,3)) cos(xyO(i,3))];  
         u_p(:,i)=RO(:,:,i)*[xyO(reqmod(i+1,n),1)-xyO(i,1);xyO(reqmod(i+1,n),2)-xyO(i,2)];
         u_b(:,i)=RO(:,:,i)*[xy(reqmod(i,m),1)-xyO(i,1);xy(reqmod(i,m),2)-xyO(i,2)];
         u_c(:,i)=RO(:,:,i)*[xy(reqmod(i+1,m),1)-xyO(i,1);xy(reqmod(i+1,m),2)-xyO(i,2)];
@@ -158,13 +158,21 @@ for time=1:1:325000
     %%%%%% Virtual Vehicle %%%%%%%%
     for i=1:n
         xyO_v(i,:)=[(xyO(i,1)-xy(reqmod(i,m),1))/r(i),(xyO(i,2)-xy(reqmod(i,m),2))/r(i),xyO(i,3)];
-        u_p_v(:,i)=RO(:,:,i)*((a_star*xyO_v(reqmod(i+1,n),1:2)-xyO_v(i,1:2)).');
+    end
+    
+    for i=1:n
+        u_p_v(:,i)=RO(:,:,i)*((a_star*xyO_v(reqmod(i+1,n),1:2)-xyO_v(i,1:2)).'); 
     end
    
     for i=1:n
        Op=[kv,0;0,kw]*u_p_v(:,i);
-       v_x(i)=(r(i)*Op(1,1))*cos(deg2rad(xyO(i,3)));
-       v_y(i)=(r(i)*Op(1,1))*sin(deg2rad(xyO(i,3)));
+       
+       v_x(i)=(r(i)*Op(1,1))*cos(xyO(i,3));
+       v_y(i)=(r(i)*Op(1,1))*sin(xyO(i,3));
+
+       %v_x(i)=(r(i)*Op(1,1))*cos(deg2rad(xyO(i,3)));
+       %v_y(i)=(r(i)*Op(1,1))*sin(deg2rad(xyO(i,3)));
+       
        w(i)=Op(2,1);
     end
     %disp(w);
