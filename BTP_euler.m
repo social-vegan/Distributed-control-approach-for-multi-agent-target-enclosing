@@ -115,11 +115,11 @@ end
 dt=1;
 xyO_1(:,3)=deg2rad(xyO_1(:,3));
 clc;
-f_x=zeros(1000,n);
-f_y=zeros(1000,n);
+f_x=zeros(900,n);
+f_y=zeros(900,n);
 xyO=xyO_1;
 xy=xy_1;
-for t=1:dt:1000
+for t=1:dt:900
     f_x(t,:)=xyO(:,1);
     f_y(t,:)=xyO(:,2);
     phi=zeros(n,1);
@@ -173,8 +173,9 @@ for t=1:dt:1000
     end
     %disp(w);
 %end
+    t0=150;
     for i=1:m
-       if t<(xy(i,5)+1) 
+       if t>t0 && t<(xy(i,5)+1+t0) 
            xy(i,1)=xy(i,1)+xy(i,3)*dt;
            xy(i,2)=xy(i,2)+xy(i,4)*dt;
        end
@@ -189,9 +190,12 @@ end
 plot(xy(:,1),xy(:,2),'^');
 hold on;
 
-for i=1:n    
+for i=1:n
+    %figure;
     plot(f_x(:,i),f_y(:,i));
+    %hold on;
     plot(f_x(end,i),f_y(end,i),'o');
+    axis equal;
     grid on;
 end
 %{
