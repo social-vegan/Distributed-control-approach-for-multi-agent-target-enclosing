@@ -61,8 +61,14 @@ b=zeros(n,1);
 c=zeros(n,1);
 del=zeros(n,1);
 ref=zeros(n,1);
+epsilon=0;
 ref=1-ref;
 kw=1;
+kv=0;
+a_star=0;
+d_v=0;
+phi_v=0;
+
 nud=input('Enter number of vehicles that are not able to detect their target: ');
 
 if nud==0
@@ -115,12 +121,12 @@ end
 dt=1;
 xyO_1(:,3)=deg2rad(xyO_1(:,3));
 clc;
-f_x=zeros(1000,n);
-f_y=zeros(1000,n);
+f_x=zeros(900,n);
+f_y=zeros(900,n);
 xyO=xyO_1;
 xy=xy_1;
 p_val=1;
-for time=1:1:1000
+for time=1:1:900
     if time>0
         f_x(p_val,:)=xyO(:,1);
         f_y(p_val,:)=xyO(:,2);
@@ -177,8 +183,10 @@ for time=1:1:1000
     end
     %disp(w);
 %end
+    t0=100;
     for i=1:m
-       if time<(xy(i,5)+1) 
+        %if time==0
+        if time>t0 && time<(xy(i,5)+1+t0) 
            xy(i,1)=xy(i,1)+xy(i,3)*dt;
            xy(i,2)=xy(i,2)+xy(i,4)*dt;
        end
@@ -203,7 +211,9 @@ hold on;
 for i=1:n
     %figure;
     plot(f_x(:,i),f_y(:,i));
+    %hold on;
     plot(f_x(end,i),f_y(end,i),'o');
+    axis equal;
     grid on;
 end
 %% Functions
